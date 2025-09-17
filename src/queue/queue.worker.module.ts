@@ -19,7 +19,10 @@ import { QueueModule } from './queue.module';
         exchanges: [{ name: cfg.exchange, type: 'topic' }],
         uri: cfg.url,
         connectionInitOptions: { wait: true, timeout: 10000 },
-        connectionManagerOptions: { heartbeatIntervalInSeconds: 15, reconnectTimeInSeconds: 5 },
+        connectionManagerOptions: {
+          heartbeatIntervalInSeconds: 15,
+          reconnectTimeInSeconds: 5,
+        },
       }),
     }),
     EmailModule,
