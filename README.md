@@ -76,11 +76,11 @@ APP_USE_WEBHOOK=false       # quando true, o webhook decide o pagamento (ignora 
 
 ## ✅ Checklist de Aceitação
 
-- [ ] **Docker Compose**: `docker compose up` e API pronta em **http://localhost:3000**
-- [ ] **Fluxo básico**: criar **student** (`/auth/signup`), **login**, **criar curso** (admin seed), **listar** e **detalhar** curso
-- [ ] **Matrícula**: criar `/enrollments` → `pending_payment` → **worker** altera para `paid` e loga **welcome_email**
-- [ ] **Duplicidade**: impedir matrícula duplicada (retorno **409/400** com mensagem clara)
-- [ ] **Capacidade**: respeitar `capacity` (retornar **422** quando lotado)
-- [ ] **Cache**: `/courses` mostrando **MISS/HIT** em log e contadores no `/metrics`
-- [ ] **RBAC**: endpoints protegidos (admin vs student)
-- [ ] **Testes**: `npm run test:cov` ok; pipeline de **CI** passando
+- [x] **Docker Compose**: `docker compose up` e API pronta em **http://localhost:3000**
+- [x] **Fluxo básico**: criar **student** (`/auth/signup`), **login**, **criar curso** (admin seed), **listar** e **detalhar** curso
+- [x] **Matrícula**: criar `/enrollments` → `pending_payment` → **worker** altera para `paid` e loga **welcome_email**
+- [x] **Duplicidade**: impedir matrícula duplicada (retorno **409/400** com mensagem clara)
+- [x] **Capacidade**: respeitar `capacity` (retornar **422** quando lotado)
+- [x] **Cache**: `/courses` mostrando **MISS/HIT** em log e contadores no `/metrics`
+- [x] **RBAC**: endpoints protegidos (admin vs student)
+- [x] **Testes**: `npm run test:cov` ok; pipeline de **CI** passando
