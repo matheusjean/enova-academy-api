@@ -2,6 +2,7 @@ import { Injectable, Inject, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
+import { MetricsService } from 'src/metrics/metrics.service';
 
 @Injectable()
 export class CoursesService {
@@ -9,6 +10,7 @@ export class CoursesService {
   constructor(
     private prisma: PrismaService,
     @Inject(CACHE_MANAGER) private cache: Cache,
+    private readonly metrics: MetricsService,
   ) {}
 
   async create(data: {
@@ -62,6 +64,7 @@ export class CoursesService {
     const payload = { items, total, page, limit };
     await this.cache.set(key, payload, 30_000);
     this.logger.log(`CACHE MISS ${key}`);
+    this.metrics?.cacheCoursesMisses.inc();
     return payload;
   }
 

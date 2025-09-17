@@ -5,10 +5,13 @@ import queueConfig from '../config/queue.config';
 import { ConfigModule, ConfigType } from '@nestjs/config';
 import { EmailModule } from '../email/email.module';
 import { EnrollmentsModule } from '../enrollments/enrollments.module';
+import { MetricsService } from 'src/metrics/metrics.service';
+import { MetricsModule } from 'src/metrics/metrics.module';
 
 @Module({
   imports: [
     ConfigModule.forFeature(queueConfig),
+    MetricsModule,
     forwardRef(() => EnrollmentsModule),
     RabbitMQModule.forRootAsync({
       imports: [ConfigModule.forFeature(queueConfig)],

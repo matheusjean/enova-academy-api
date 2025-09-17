@@ -2,6 +2,7 @@ import { Injectable, Logger, Inject } from '@nestjs/common';
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import queueConfig from '../config/queue.config';
 import type { ConfigType } from '@nestjs/config';
+import { MetricsService } from 'src/metrics/metrics.service';
 
 @Injectable()
 export class QueueService {
@@ -11,6 +12,7 @@ export class QueueService {
     private readonly amqp: AmqpConnection,
     @Inject(queueConfig.KEY)
     private readonly cfg: ConfigType<typeof queueConfig>,
+    private readonly metrics: MetricsService,
   ) {}
 
   async publishPaymentRequested(payload: {
@@ -19,6 +21,7 @@ export class QueueService {
     student_id: string;
   }) {
     await this.amqp.publish(this.cfg.exchange, this.cfg.paymentKey, payload);
+    this.metrics?.queuePublished.labels('payment_requested').inc();
     this.logger.log(`Published payment_requested: ${JSON.stringify(payload)}`);
   }
 
