@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    env:
+      NODE_ENV: test
+      APP_WORKER: 'false'
+      APP_USE_WEBHOOK: 'false'
+      APP_JWT_SECRET: ci-secret
+      APP_JWT_TTL: 1h
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/enova?schema=public
+      REDIS_URL: redis://localhost:6379
+      RABBITMQ_URL: amqp://localhost:5672
+      RABBITMQ_EXCHANGE: enova.exchange
+      RABBITMQ_PAYMENT_KEY: payment.requested
+      RABBITMQ_WELCOME_KEY: welcome.email
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Prisma generate
+        run: npx prisma generate
+
+      - name: Lint (if configured)
+        run: |
+          if npm run | grep -q "^  lint$"; then
+            npm run lint
+          else
+            echo "No 'lint' script configured. Skipping lint."
+          fi
+
+      - name: Run unit tests with coverage
+        run: npm run test:cov
+
+      - name: Build
+        run: npm run build
