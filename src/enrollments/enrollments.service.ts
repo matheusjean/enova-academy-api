@@ -1,8 +1,10 @@
 import {
   BadRequestException,
+  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { QueueService } from '../queue/queue.service';
@@ -28,14 +30,18 @@ export class EnrollmentsService {
     const dup = await this.prisma.enrollment.findUnique({
       where: { studentId_courseId: { studentId, courseId } },
     });
-    if (dup) throw new BadRequestException('Already enrolled');
+    if (dup) {
+      throw new ConflictException('Student already enrolled in this course');
+    }
 
     if (course.capacity) {
       const count = await this.prisma.enrollment.count({
         where: { courseId, status: { not: 'cancelled' } },
       });
       if (count >= course.capacity) {
-        throw new BadRequestException('Course is full');
+        throw new UnprocessableEntityException(
+          `Course "${course.title}" is full`,
+        );
       }
     }
 
